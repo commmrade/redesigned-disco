@@ -27,7 +27,7 @@ struct Entry {
     }
 };
 
-std::pair<int, int> binary_search(const std::vector<Entry>& entries, const Entry& key) {
+std::pair<std::vector<int>, int> binary_search(const std::vector<Entry>& entries, const Entry& key) {
     // FIO, id
     int low = 0;
     int high = entries.size() - 1;
@@ -37,7 +37,20 @@ std::pair<int, int> binary_search(const std::vector<Entry>& entries, const Entry
         const auto mid = low + (high - low) / 2;
 
         if ((++cnt, entries[mid] == key)) {
-            return {mid, cnt};
+            int l = mid;
+            while (l > 0 && (++cnt, entries[l - 1] == key)) {
+                --l;
+            }
+            int r = mid;
+            while (r + 1 < static_cast<int>(entries.size()) && (++cnt, entries[r + 1] == key)) {
+                ++r;
+            }
+
+            std::vector<int> rows;
+            for (int i = l; i <= r; ++i) {
+                rows.push_back(i);
+            }
+            return {rows, cnt};
         }
 
         if ((++cnt, entries[mid] < key)) {
@@ -47,29 +60,35 @@ std::pair<int, int> binary_search(const std::vector<Entry>& entries, const Entry
         }
     }
 
-    return {-1, cnt};
+    return {{}, cnt};
 }
 
-std::pair<int, int> sentinel_search(std::vector<Entry>& entries, const Entry& key) {
+std::pair<std::vector<int>, int> sentinel_search(std::vector<Entry>& entries, const Entry& key) {
     int cnt = 0;
+    std::vector<int> rows;
+    const int last = static_cast<int>(entries.size()) - 1;
 
     Entry saved = std::move(entries.back());
     entries.back() = key;
 
     int idx = 0;
-    while ((++cnt, !(entries[idx] == key))) {
+    while (true) {
+        while ((++cnt, !(entries[idx] == key))) {
+            ++idx;
+        }
+        if (idx == last) {
+            break;
+        }
+        rows.push_back(idx);
         ++idx;
     }
 
-    if (idx == entries.size()) {
-        if ((++cnt, saved == key)) {
-            return {idx - 1, cnt};
-        } else {
-            return {-1, cnt};
-        }
+    entries.back() = std::move(saved);
+    if ((++cnt, entries.back() == key)) {
+        rows.push_back(last);
     }
 
-    return {idx, cnt};
+    return {rows, cnt};
 }
 
 std::vector<Entry> read_entries(const std::filesystem::path& path, const int n) {
@@ -96,9 +115,11 @@ std::vector<Entry> read_entries(const std::filesystem::path& path, const int n) 
 
 int main() {
     int n;
+    std::println("enter n:");
     std::cin >> n;
 
     Entry entry;
+    std::println("Введите surname,name, patron., id:");
     std::cin >> entry.surname >> entry.name >> entry.patron >> entry.id;
 
     std::println("Binary search:");

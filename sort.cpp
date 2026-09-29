@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <fstream>
 #include <stdexcept>
+#include <print>
 #include <iostream>
 #include <vector>
 
@@ -158,6 +159,7 @@ void write_entries(const std::filesystem::path& path, const std::vector<Entry>& 
 
 int main() {
     int n;
+    std::println("enter n:");
     std::cin >> n;
     // ключ: ФИО, номер заявки
 
