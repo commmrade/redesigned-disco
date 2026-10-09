@@ -169,13 +169,13 @@ int main() {
         const auto start = std::chrono::high_resolution_clock::now();
         const auto sorted_entries = merge_sort(entries);
         const auto end = std::chrono::high_resolution_clock::now();
-        write_entries("output_sort1.txt", sorted_entries, std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
+        write_entries("output_sort1.txt", sorted_entries, std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
     }
     {
         const auto start = std::chrono::high_resolution_clock::now();
         const auto sorted_entries = tw_insert_sort(entries);
         const auto end = std::chrono::high_resolution_clock::now();
-        write_entries("output_sort2.txt", sorted_entries, std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
+        write_entries("output_sort2.txt", sorted_entries, std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
     }
 
     return 0;
